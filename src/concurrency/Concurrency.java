@@ -5,7 +5,9 @@
  */
 package concurrency;
 
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,33 +20,21 @@ public class Concurrency {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Pool pool = new Pool();
-        final int MAX_SIZE = 50;
-        Thread producer = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                Random randomGenerator = new Random();
-                int pause = randomGenerator.nextInt(500);
-                for (int i = 0; i < MAX_SIZE; i++) {
-                    try {
-                        Thread.sleep(pause);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Concurrency.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    System.out.println("producer puts " + i);
-                    pool.put(i);
-                }
-            }
-        });
-
+//        Thread producer = new Thread(new Producer(pool));
         Thread consumer = new Thread(new Consumer(pool));
         Thread consumer2 = new Thread(new Consumer(pool));
-
-        producer.start();
+//
+//        producer.start();
         consumer.start();
         consumer2.start();
+
+//        final Semaphore semaphore = new Semaphore(5, true);
+//        semaphore.acquire();
+        
+        
+
     }
 
 }

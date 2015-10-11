@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class Consumer implements Runnable {
 
-    private static final int MAX_SIZE = 20;
+    private static final int MAX_SIZE = 5;
 
     private static int counter = 0;
     private final int marker;
@@ -32,12 +32,22 @@ public class Consumer implements Runnable {
     public void run() {
         Random randomGenerator = new Random();
         int pause = randomGenerator.nextInt(500);
+        int item;
         for (int i = 1; i <= MAX_SIZE; i++) {
             try {
                 Thread.sleep(pause);
-                System.out.println("consumer " + marker + ", try " + i + " gets " + pool.get());
             } catch (InterruptedException ex) {
-                Logger.getLogger(Concurrency.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("consumer " + marker + " failed to wait");
+            }
+            try {
+                item = pool.get();
+                System.out.println("consumer " + marker + ", try " + i + " gets " + item);
+            } catch (ArrayIndexOutOfBoundsException e){
+                System.out.println("consumer " + marker + " failed at try " + i);
+            } catch (NullPointerException e){
+                System.out.println("consumer " + marker + " failed at try " + i + " due to " + e.getLocalizedMessage());
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Consumer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
