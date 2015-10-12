@@ -30,7 +30,7 @@ public class Producer implements Runnable {
         int counter = 0;
         while (true) {
             try {
-                pause = randomGenerator.nextInt(500);
+                pause = randomGenerator.nextInt(500) + 1000;
                 Thread.sleep(pause);
                 pool.put(name + " " + counter);
                 counter++;

@@ -29,7 +29,7 @@ class Pool {
         }
         System.out.println("put " + item);
         list.add(item);
-        notifyAll();
+        notify();
     }
 
     public synchronized String get() throws InterruptedException {
@@ -41,7 +41,7 @@ class Pool {
         int s = list.size();
         String elem = list.remove(s - 1);
         //System.out.println("pool[" + (s - 1) + "] = " + elem);
-        notifyAll();
+        notify();
         return elem;
     }
 
