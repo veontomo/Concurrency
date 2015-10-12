@@ -17,37 +17,37 @@ public class Consumer implements Runnable {
 
     private static final int MAX_SIZE = 5;
 
-    private static int counter = 0;
-    private final int marker;
+    private final String name;
 
     private final Pool pool;
 
-    public Consumer(Pool pool) {
-        counter++;
+    public Consumer(Pool pool, String name) {
         this.pool = pool;
-        marker = counter;
+        this.name = name;
     }
 
     @Override
     public void run() {
         Random randomGenerator = new Random();
-        int pause = randomGenerator.nextInt(500);
-        int item;
-        for (int i = 1; i <= MAX_SIZE; i++) {
+        int pause;
+        String item;
+        while (true) {
             try {
+                pause = randomGenerator.nextInt(500);
                 Thread.sleep(pause);
             } catch (InterruptedException ex) {
-                System.out.println("consumer " + marker + " failed to wait");
+                System.out.println("consumer " + name + " failed to wait");
             }
             try {
                 item = pool.get();
-                System.out.println("consumer " + marker + ", try " + i + " gets " + item);
+                System.out.println("consumer " + name + " gets " + item);
             } catch (ArrayIndexOutOfBoundsException e){
-                System.out.println("consumer " + marker + " failed at try " + i);
+                System.out.println("consumer " + name + " failed");
+                e.printStackTrace();
             } catch (NullPointerException e){
-                System.out.println("consumer " + marker + " failed at try " + i + " due to " + e.getLocalizedMessage());
+                System.out.println("consumer " + name + " failed due to " + e.getLocalizedMessage());
             } catch (InterruptedException ex) {
-                Logger.getLogger(Consumer.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("consumer " + name + " failed to wait");
             }
         }
     }

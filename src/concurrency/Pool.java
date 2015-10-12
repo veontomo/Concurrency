@@ -13,45 +13,36 @@ import java.util.concurrent.Semaphore;
  * @author Andrea
  */
 class Pool {
-   private static final int MAX_AVAILABLE = 100;
-   private final Semaphore available = new Semaphore(MAX_AVAILABLE, true);
 
-   public int get() throws InterruptedException {
-     available.acquire();
-     return getNextAvailableItem();
-   }
+    private static final int MAX_SIZE = 3;
 
-   public void put(int x) {
-     if (markAsUnused(x))
-       available.release();
-   }
+    private final ArrayList<String> list;
 
-   // Not a particularly efficient data structure; just for demo
+    public Pool() {
+        list = new ArrayList<>();
+    }
 
-   protected int[] items = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-   protected boolean[] used = new boolean[MAX_AVAILABLE];
+    public synchronized void put(String item) throws InterruptedException {
+        while (list.size() >= MAX_SIZE) {
+            System.out.println("pool is full, wait to put " + item);
+            wait();
+        }
+        System.out.println("put " + item);
+        list.add(item);
+        notifyAll();
+    }
 
-   protected synchronized int getNextAvailableItem() {
-     for (int i = 0; i < MAX_AVAILABLE; ++i) {
-       if (!used[i]) {
-          used[i] = true;
-          return items[i];
-       }
-     }
-     return -1; // not reached
-   }
+    public synchronized String get() throws InterruptedException {
+        
+        while (list.isEmpty()) {
+            System.out.println("pool is empty, waiting until it becomes non-empty");
+            wait();
+        }
+        int s = list.size();
+        String elem = list.remove(s - 1);
+        //System.out.println("pool[" + (s - 1) + "] = " + elem);
+        notifyAll();
+        return elem;
+    }
 
-   protected synchronized boolean markAsUnused(int item) {
-     for (int i = 0; i < MAX_AVAILABLE; ++i) {
-       if (item == items[i]) {
-          if (used[i]) {
-            used[i] = false;
-            return true;
-          } else
-            return false;
-       }
-     }
-     return false;
-   }
-
- }
+}

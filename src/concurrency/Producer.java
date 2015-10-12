@@ -15,27 +15,28 @@ import java.util.logging.Logger;
  */
 public class Producer implements Runnable {
 
-    private static final int MAX_SIZE = 10;
-
     private final Pool pool;
-    
-    public Producer(Pool pool) {
+    private final String name;
+
+    public Producer(Pool pool, String name) {
         this.pool = pool;
+        this.name = name;
     }
 
     @Override
     public void run() {
         Random randomGenerator = new Random();
         int pause;
-        for (int i = 0; i < MAX_SIZE; i++) {
+        int counter = 0;
+        while (true) {
             try {
-                pause = randomGenerator.nextInt(500) + 1000 ;
-                Thread.sleep(pause) ;
+                pause = randomGenerator.nextInt(500);
+                Thread.sleep(pause);
+                pool.put(name + " " + counter);
+                counter++;
             } catch (InterruptedException ex) {
-                Logger.getLogger(Concurrency.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("producer puts " + i);
-            pool.put(i);
         }
     }
 }

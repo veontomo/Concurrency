@@ -22,16 +22,16 @@ public class Concurrency {
      */
     public static void main(String[] args) throws InterruptedException {
         Pool pool = new Pool();
-//        Thread producer = new Thread(new Producer(pool));
-        Thread consumer = new Thread(new Consumer(pool));
-        Thread consumer2 = new Thread(new Consumer(pool));
-//
-//        producer.start();
+        Thread producer = new Thread(new Producer(pool, "banana"));
+        Thread producer2 = new Thread(new Producer(pool, "apple"));
+        Thread consumer = new Thread(new Consumer(pool, "monkey 1"));
+        Thread consumer2 = new Thread(new Consumer(pool, "monkey 2"));
+
+        producer.start();
         consumer.start();
+        producer2.start();
         consumer2.start();
 
-//        final Semaphore semaphore = new Semaphore(5, true);
-//        semaphore.acquire();
         
         
 
